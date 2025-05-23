@@ -1,68 +1,67 @@
 from abc import ABC, abstractmethod
 
+
 class Piece(ABC):
 
     def __init__(self):
-        self.colour : None|int = None
-        self.has_moved :bool = False
+        self.colour: None | int = None
+        self.has_moved: bool = False
 
-    def set_colour(self, colour:int):
+    def set_colour(self, colour: int) -> None:
         if isinstance(colour, int):
             self.colour = colour
-        raise ValueError('Color is presented by integer.')
+        raise ValueError("Color is presented by integer.")
 
     @abstractmethod
-    def check_move(self, board, piece):
-        ...
+    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
 
     @abstractmethod
-    def __repr__(self):
-        ...
+    def __repr__(self): ...
+
 
 class Pawn(Piece):
 
-    def check_move(self, board, piece):
-        ...
-    
+    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+
     def __repr__(self):
-        return 'P'
+        return "P"
+
 
 class Knight(Piece):
 
-    def check_move(self, board, piece):
-        ...
-    
+    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+
     def __repr__(self):
-        return 'N'
+        return "N"
+
 
 class Bishop(Piece):
 
-    def check_move(self, board, piece):
-        ...
-    
+    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+
     def __repr__(self):
-        return 'B'
+        return "B"
+
 
 class Rook(Piece):
 
-    def check_move(self, board, piece):
-        ...
-    
+    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+
     def __repr__(self):
-        return 'R'
+        return "R"
+
 
 class Queen(Piece):
 
-    def check_move(self, board, piece):
-        ...
-    
+    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+
     def __repr__(self):
-        return 'Q'
+        return "Q"
+
 
 class King(Piece):
 
-    def check_move(self, board, piece):
-        ...
+    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
 
     def __repr__(self):
-        return 'K'
+        return "K"
