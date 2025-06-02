@@ -9,6 +9,77 @@ class ChessBoard:
         self.white_king_coordinates = None
         self.black_king_coordinates = None
 
+    def is_king_checked(self, color:int):
+        
+        alies_color = color
+
+        if alies_color:
+            king_y, king_x = self.white_king_coordinates
+        else:
+            king_y, king_x = self.black_king_coordinates
+
+        #Knight check
+
+        for dy, dx in [(2, -1), (2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2)]:
+            attack_y, attack_x = king_y + dy, king_x + dx 
+            if self._size > attack_x >= 0 and self._size > attack_y >= 0:
+                piece = self.grid[attack_y][attack_x].piece
+                if isinstance(piece, Knight) and piece.color != alies_color:
+                    return True
+
+        #Pawn check
+        
+        if alies_color:
+            pawn_coordinates = [(-1, -1), (-1, 1)]
+        else:
+            pawn_coordinates = [(1, -1), (1, 1)]
+        
+        for dy, dx in pawn_coordinates:
+            attack_y, attack_x = king_y + dy, king_x + dx 
+            if self._size > attack_x >= 0 and self._size > attack_y >= 0:
+                piece = self.grid[attack_y][attack_x].piece
+                if isinstance(piece, Pawn) and piece.color != alies_color:
+                    return True
+
+        #Diagonal check
+
+        for dx, dy in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
+            attack_y, attack_x = king_y + dy, king_x + dx
+            while self._size > attack_x >= 0 and self._size > attack_y >= 0:
+                piece = self.grid[attack_y][attack_x].piece
+                if piece is not None:
+                    if piece.color != alies_color and isinstance(piece, (Queen, Bishop)):
+                        return True
+                    break
+                attack_x += dx
+                attack_y += dy
+
+        #Horizontal check
+
+        for dx in [-1, 1]:
+            attack_y, attack_x = king_y, king_x + dx
+            while self._size > attack_x >= 0:
+                piece = self.grid[attack_y][attack_x].piece
+                if piece is not None:
+                    if piece.color != alies_color and isinstance(piece, (Queen, Rook)):
+                        return True
+                    break
+                attack_x += dx
+        
+        #Vertical check
+
+        for dy in [-1, 1]:
+            attack_y, attack_x = king_y + dy, king_x
+            while self._size > attack_y >= 0:
+                piece = self.grid[attack_y][attack_x].piece
+                if piece is not None:
+                    if piece.color != alies_color and isinstance(piece, (Queen, Rook)):
+                        return True
+                    break
+                attack_y += dy
+
+        return False
+
     def setup_default_position(self):
 
         if self._size != 8:

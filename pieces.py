@@ -20,7 +20,7 @@ class Piece(ABC):
         raise ValueError('Color should be presented by integer')
 
     @abstractmethod
-    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+    def check_move(self, board, move) -> bool: ...
 
     @abstractmethod
     def __repr__(self): ...
@@ -28,15 +28,15 @@ class Piece(ABC):
 
 class Pawn(Piece):
 
-    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
-
+    def check_move(self, board, move) -> bool: ...
+        
     def __repr__(self):
         return f"{self.color}P"
 
 
 class Knight(Piece):
 
-    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+    def check_move(self, board, move) -> bool: ...
 
     def __repr__(self):
         return f"{self.color}N"
@@ -44,7 +44,7 @@ class Knight(Piece):
 
 class Bishop(Piece):
 
-    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+    def check_move(self, board, move) -> bool: ...
 
     def __repr__(self):
         return f"{self.color}B"
@@ -52,7 +52,7 @@ class Bishop(Piece):
 
 class Rook(Piece):
 
-    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+    def check_move(self, board, move) -> bool: ...
 
     def __repr__(self):
         return f"{self.color}R"
@@ -60,7 +60,7 @@ class Rook(Piece):
 
 class Queen(Piece):
 
-    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+    def check_move(self, board, move) -> bool: ...
 
     def __repr__(self):
         return f"{self.color}Q"
@@ -68,7 +68,7 @@ class Queen(Piece):
 
 class King(Piece):
 
-    def check_move(self, board, move, enemy_move, checked: bool) -> bool: ...
+    def check_move(self, board, move) -> bool: ...
 
     def __repr__(self):
         return f"{self.color}K"
