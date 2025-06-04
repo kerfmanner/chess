@@ -6,6 +6,7 @@ class Piece(ABC):
     0 - Black
     1 - White
     '''
+
     def __init__(self, color: None|int = None):
         self._color: None | int = color
         self.has_moved: bool = False
@@ -13,6 +14,7 @@ class Piece(ABC):
     @property
     def color(self):
         return self._color
+
     @color.setter
     def color(self, color):
         if isinstance(color, int):
@@ -21,6 +23,9 @@ class Piece(ABC):
 
     @abstractmethod
     def check_move(self, board, move) -> bool: ...
+
+    @abstractmethod
+    def check_if_could_move(self, board) -> bool: ...
 
     @abstractmethod
     def __repr__(self): ...
@@ -38,6 +43,8 @@ class Knight(Piece):
 
     def check_move(self, board, move) -> bool: ...
 
+    def check_if_could_move(self, board) -> bool: ...
+
     def __repr__(self):
         return f"{self.color}N"
 
@@ -45,6 +52,8 @@ class Knight(Piece):
 class Bishop(Piece):
 
     def check_move(self, board, move) -> bool: ...
+
+    def check_if_could_move(self, board) -> bool: ...
 
     def __repr__(self):
         return f"{self.color}B"
@@ -54,6 +63,8 @@ class Rook(Piece):
 
     def check_move(self, board, move) -> bool: ...
 
+    def check_if_could_move(self, board) -> bool: ...
+
     def __repr__(self):
         return f"{self.color}R"
 
@@ -62,6 +73,8 @@ class Queen(Piece):
 
     def check_move(self, board, move) -> bool: ...
 
+    def check_if_could_move(self, board) -> bool: ...
+
     def __repr__(self):
         return f"{self.color}Q"
 
@@ -69,6 +82,8 @@ class Queen(Piece):
 class King(Piece):
 
     def check_move(self, board, move) -> bool: ...
+
+    def check_if_could_move(self, board) -> bool: ...
 
     def __repr__(self):
         return f"{self.color}K"
