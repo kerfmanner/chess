@@ -1,16 +1,36 @@
-'''Chess board module'''
+"""Chess board module"""
+
+from square import Square
 from pieces import Pawn, Rook, Knight, Bishop, Queen, King
 
 class ChessBoard:
 
     def __init__(self, size):
         self._size = size
-        self.grid = [[Square(color=((i+j) % 2)) for i in range(size)] for j in range(size)]
-        self.white_king_coordinates = None
-        self.black_king_coordinates = None
+        self.grid = [
+            [Square(position=(j, i), color=((i + j) % 2)) for i in range(size)]
+            for j in range(size)
+        ]
 
-    def is_king_checked(self, color:int):
-        
+    def move_piece(self, from_pos:tuple, to_pos:tuple, color:int) -> bool: ...
+
+    def check_if_move_legal(self, from_pos:tuple, to_pos:tuple, color:int) -> bool: ...
+
+    def stalemate_check(self, color: int):
+
+        alies_color = color
+
+        for row in self.grid:
+            for cell in row:
+                piece = cell.piece
+                if piece is not None and piece.color == alies_color:
+                    if piece.check_if_could_move(self, cell):
+                        return False
+
+        return True
+
+    def is_king_checked(self, color: int):
+
         alies_color = color
 
         if alies_color:
@@ -18,43 +38,54 @@ class ChessBoard:
         else:
             king_y, king_x = self.black_king_coordinates
 
-        #Knight check
+        # Knight check
 
-        for dy, dx in [(2, -1), (2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2)]:
-            attack_y, attack_x = king_y + dy, king_x + dx 
+        for dy, dx in [
+            (2, -1),
+            (2, 1),
+            (1, 2),
+            (-1, 2),
+            (-2, 1),
+            (-2, -1),
+            (-1, -2),
+            (1, -2),
+        ]:
+            attack_y, attack_x = king_y + dy, king_x + dx
             if self._size > attack_x >= 0 and self._size > attack_y >= 0:
                 piece = self.grid[attack_y][attack_x].piece
                 if isinstance(piece, Knight) and piece.color != alies_color:
                     return True
 
-        #Pawn check
-        
+        # Pawn check
+
         if alies_color:
             pawn_coordinates = [(-1, -1), (-1, 1)]
         else:
             pawn_coordinates = [(1, -1), (1, 1)]
-        
+
         for dy, dx in pawn_coordinates:
-            attack_y, attack_x = king_y + dy, king_x + dx 
+            attack_y, attack_x = king_y + dy, king_x + dx
             if self._size > attack_x >= 0 and self._size > attack_y >= 0:
                 piece = self.grid[attack_y][attack_x].piece
                 if isinstance(piece, Pawn) and piece.color != alies_color:
                     return True
 
-        #Diagonal check
+        # Diagonal check
 
         for dx, dy in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
             attack_y, attack_x = king_y + dy, king_x + dx
             while self._size > attack_x >= 0 and self._size > attack_y >= 0:
                 piece = self.grid[attack_y][attack_x].piece
                 if piece is not None:
-                    if piece.color != alies_color and isinstance(piece, (Queen, Bishop)):
+                    if piece.color != alies_color and isinstance(
+                        piece, (Queen, Bishop)
+                    ):
                         return True
                     break
                 attack_x += dx
                 attack_y += dy
 
-        #Horizontal check
+        # Horizontal check
 
         for dx in [-1, 1]:
             attack_y, attack_x = king_y, king_x + dx
@@ -65,8 +96,8 @@ class ChessBoard:
                         return True
                     break
                 attack_x += dx
-        
-        #Vertical check
+
+        # Vertical check
 
         for dy in [-1, 1]:
             attack_y, attack_x = king_y + dy, king_x
@@ -83,7 +114,7 @@ class ChessBoard:
     def setup_default_position(self):
 
         if self._size != 8:
-            raise ValueError('The size of default chess board should be 8')
+            raise ValueError("The size of default chess board should be 8")
 
         for i in range(self._size):
             self.grid[1][i].piece = Pawn(1)
@@ -93,11 +124,11 @@ class ChessBoard:
             self.grid[0][i].piece = Rook(1)
             self.grid[7][i].piece = Rook(0)
 
-        for i in (1,6):
+        for i in (1, 6):
             self.grid[0][i].piece = Knight(1)
             self.grid[7][i].piece = Knight(0)
 
-        for i in (2,5):
+        for i in (2, 5):
             self.grid[0][i].piece = Bishop(1)
             self.grid[7][i].piece = Bishop(0)
 
@@ -111,42 +142,15 @@ class ChessBoard:
         self.black_king_coordinates = (7, 4)
 
     def __str__(self):
-        message = 'Black view(0 - Black, 1 - White):\n'
-        message += '  '.join([' ','A','B','C','D','E','F','G','H']) + '\n'
+        message = "Black view(0 - Black, 1 - White):\n"
+        message += "  ".join([" ", "A", "B", "C", "D", "E", "F", "G", "H"]) + "\n"
         for index, row in enumerate(self.grid):
-            message += f'{8 - index} ' + ' '.join(str(cell) for cell in row) + f' {8 - index}'
-            message += '\n'
-        message += '  '.join([' ','A','B','C','D','E','F','G','H'])
+            message += (
+                f"{8 - index} " + " ".join(str(cell) for cell in row) + f" {8 - index}"
+            )
+            message += "\n"
+        message += "  ".join([" ", "A", "B", "C", "D", "E", "F", "G", "H"])
         return message
 
     def __repr__(self):
-        return f'(Size = {self._size}, grid = {self.grid})'
-
-class Square:
-    def __init__(self, color:int|None=None):
-        self._color = color
-        self._piece = None
-
-    @property
-    def color(self):
-        return self._color
-    
-    @color.setter
-    def color(self, color):
-        self._color = color
-
-    @property
-    def piece(self):
-        return self._piece
-    
-    @piece.setter
-    def piece(self, piece):
-        self._piece = piece
-
-    def __str__(self):
-        if self.piece is None:
-            return '--'
-        return f'{self.piece}'
-
-    def __repr__(self):
-        return f'(Color = {self.color}, piece = {self.piece}'
+        return f"(Size = {self._size}, grid = {self.grid})"
